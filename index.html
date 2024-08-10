@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Sudoku Solver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        ul li {
+            margin: 5px 0;
+        }
+        code {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+        }
+        .note {
+            background-color: #e7f1ff;
+            border-left: 5px solid #007bff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .note h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart Sudoku Solver</h1>
+        <p>This Java application solves any NxN Sudoku puzzle using the Recursive Backtracking algorithm. It guarantees a solution for solvable puzzles and displays the time taken to find the solution.</p>
+
+        <h2>Features</h2>
+        <ul>
+            <li><strong>Solves NxN Sudoku Puzzles:</strong> Works with any size Sudoku grid.</li>
+            <li><strong>Recursive Backtracking Algorithm:</strong> Efficiently finds solutions.</li>
+            <li><strong>Timing:</strong> Displays how long it took to solve the puzzle.</li>
+        </ul>
+
+        <h2>Usage Instructions</h2>
+        <ol>
+            <li>
+                <strong>Download Required Files:</strong>
+                <ul>
+                    <li>Ensure you have the <code>Sudoku.jar</code> file and the <code>puzzle.txt</code> file.</li>
+                    <li>Make sure these files are in the same directory.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Prepare the Puzzle File:</strong>
+                <ul>
+                    <li>Open <code>puzzle.txt</code> and enter your Sudoku puzzle.</li>
+                    <li>Use <code>0</code> to represent empty cells. See the <strong>File Format</strong> section below for details.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Run the Solver:</strong>
+                <ul>
+                    <li>Open your terminal or command prompt.</li>
+                    <li>Navigate to the directory where <code>Sudoku.jar</code> and <code>puzzle.txt</code> are located.</li>
+                    <pre><code>cd path/to/your/directory
+java -jar Sudoku.jar</code></pre>
+                </ul>
+            </li>
+            <li>
+                <strong>Enter Puzzle Dimensions:</strong>
+                <ul>
+                    <li>When prompted, specify the number of rows and columns for the inner boxes of the Sudoku grid.</li>
+                    <li><strong>Example for a standard 9x9 Sudoku:</strong></li>
+                    <ul>
+                        <li>Enter <code>3</code> for the number of rows.</li>
+                        <li>Enter <code>3</code> for the number of columns.</li>
+                    </ul>
+                    <li><strong>Example for a 12x12 Sudoku with 3x4 boxes:</strong></li>
+                    <ul>
+                        <li>Enter <code>3</code> for rows.</li>
+                        <li>Enter <code>4</code> for columns.</li>
+                    </ul>
+                </ul>
+            </li>
+            <li>
+                <strong>File Format:</strong>
+                <p>The <code>puzzle.txt</code> file should be formatted as follows:</p>
+                <pre><code>3 0 0 4 0 2 0 9 0
+0 0 0 0 0 9 0 6 3
+0 0 7 0 6 3 1 0 0
+0 9 1 7 2 6 0 8 0
+0 0 0 9 0 1 0 0 0
+0 2 0 3 8 5 9 1 0
+0 0 8 1 9 0 2 0 0
+6 7 0 2 0 0 0 0 0
+0 3 0 6 0 4 0 0 9</code></pre>
+            </li>
+        </ol>
+
+        <div class="note">
+            <h2>Notes</h2>
+            <ul>
+                <li>The program handles any NxN Sudoku puzzle, but you must specify the dimensions of the inner boxes accurately for correct solving.</li>
+                <li>For non-standard puzzles, adjust the dimensions according to your puzzle layout.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
