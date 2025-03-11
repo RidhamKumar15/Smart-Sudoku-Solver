@@ -1,6 +1,13 @@
 # Sudoku-Solver
 This Java application solves any NxN Sudoku puzzle using the Recursive Backtracking algorithm. It guarantees a solution for solvable puzzles and displays the time taken to find the solution.
 
+🎉 Try This Out!
+
+Want to see the Smart Sudoku Solver in action? Check it out live by clicking the link below:
+https://ridhamkumar15.github.io/Smart-Sudoku-Solver/
+
+🚀 Features
+🔗 Smart Sudoku Solver
 # Features 
  * Solves NxN Sudoku Puzzles: Works with any size Sudoku grid.
  * Recursive Backtracking Algorithm: Efficiently finds solutions.
