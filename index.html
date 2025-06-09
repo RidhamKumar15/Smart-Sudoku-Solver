@@ -1,118 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Sudoku Solver</title>
-    <link rel="shortcut icon" href="images/sudoku.svg" type="image/x-icon">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            background-color: #28a745;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px 10px 0 0;
-        }
-        .header a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 24px;
-        }
-        .header:hover {
-            background-color: #156d28;
-        }
-        .header a:hover {
-            text-decoration: underline;
-        }
-        h1, h2, h3 {
-            color: #28a745;
-        }
-        ul {
-            list-style-type: square;
-            padding-left: 20px;
-        }
-        code {
-            background-color: #f4f4f4;
-            padding: 2px 4px;
-            border-radius: 4px;
-            color: #d63384;
-        }
-        .file-format {
-            background-color: #E9FF97;
-            border-left: 5px solid #64d811;
-            padding: 10px;
-            margin: 20px 0;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart Sudoku Solver</title>
+<link rel="shortcut icon" href="images/sudoku.svg" type="image/x-icon" />
+<style>
+  /* Reset & base */
+  body, html {
+    margin: 0; padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0a0a23;
+    color: #e0e0e0;
+    overflow-x: hidden;
+  }
+  /* Background video */
+  #bg-video {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    object-fit: cover;
+    z-index: -2;
+    filter: brightness(0.35) saturate(1.3) blur(1px);
+  }
+  /* Frosted glass container */
+  .container {
+    max-width: 820px;
+    margin: 50px auto 80px;
+    padding: 40px 40px 50px;
+    background: rgba(25, 25, 45, 0.75);
+    border-radius: 20px;
+    box-shadow:
+      0 8px 32px rgba(90, 90, 140, 0.4),
+      inset 0 0 80px rgba(255, 215, 0, 0.1);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    color: #f0e6c8;
+    line-height: 1.65;
+  }
+  /* Header */
+  .header {
+    background: linear-gradient(90deg, #2d2d7b 0%, #0a0a23 100%);
+    padding: 28px 0 22px;
+    border-radius: 20px 20px 0 0;
+    text-align: center;
+    font-size: 2.6rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #ffdd55;
+    text-shadow: 0 0 14px #ffd700aa, 0 0 24px #5c5cffcc;
+    box-shadow: 0 3px 15px #5c5cff66;
+    margin-bottom: 30px;
+    user-select: none;
+  }
+  .header a {
+    color: #ffd700;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+  .header a:hover {
+    color: #fff;
+    text-shadow: 0 0 22px #ffd700, 0 0 28px #5c5cff;
+  }
+  /* Section headings */
+  h1, h2, h3 {
+    color: #ffd700;
+    text-shadow: 0 0 12px #5c5cff;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+  h1 { font-size: 2.8rem; }
+  h2 { font-size: 1.8rem; }
+  h3 { font-size: 1.3rem; }
+  /* Paragraph container for line-by-line */
+  .line-container {
+    margin-bottom: 2rem;
+  }
+  /* Line by line scroll animation */
+  .scroll-line {
+    display: block;
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+    transition: opacity 0.55s cubic-bezier(.23,1.14,.56,1.01), transform 0.55s cubic-bezier(.23,1.14,.56,1.01);
+    will-change: opacity, transform;
+    font-size: 1.1rem;
+    margin-bottom: 0.45em;
+  }
+  .scroll-line.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  /* Lists */
+  ul, ol {
+    margin-left: 1.2rem;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+  ul li, ol li {
+    margin-bottom: 0.9em;
+  }
+  ul li span, ol li span {
+    display: block;
+  }
+  /* Code styling */
+  code {
+    background: rgba(40, 40, 90, 0.6);
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: #ff7de9;
+    font-size: 1.05em;
+    font-family: 'Fira Mono', Consolas, monospace;
+  }
+  /* File format box */
+  .file-format {
+    background: rgba(30, 30, 80, 0.85);
+    border-left: 6px solid #ffd700;
+    padding: 16px 22px;
+    margin: 20px 0 40px;
+    font-family: 'Fira Mono', Consolas, monospace;
+    color: #b0eaff;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+  }
+  /* Notes box */
+  .notes {
+    background: rgba(255, 215, 0, 0.1);
+    border-left: 5px solid #5c5cff;
+    padding: 20px 24px;
+    margin-top: 30px;
+    font-size: 1.15rem;
+    border-radius: 12px;
+    color: #fff;
+    line-height: 1.5;
+  }
+  /* Link button */
+  .link-btn {
+    display: inline-block;
+    background: rgba(44, 44, 120, 0.85);
+    color: #ffd700;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-decoration: none;
+    box-shadow: 0 2px 12px #5c5cffaa;
+    transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+    user-select: none;
+  }
+  .link-btn:hover {
+    background: #ffd700;
+    color: #2d2d7b;
+    box-shadow: 0 3px 24px #ffd700cc;
+  }
+  /* Icon next to link */
+  .icon-img {
+    vertical-align: middle;
+    margin-right: 10px;
+    filter: drop-shadow(0 0 6px #fff);
+  }
+  /* Responsive */
+  @media (max-width: 720px) {
+    .container {
+      margin: 30px 15px 50px;
+      padding: 30px 20px 40px;
+    }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.4rem; }
+    .link-btn {
+      font-size: 1rem;
+      padding: 10px 22px;
+    }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <a href="https://github.com/RidhamKumar15/Smart-Sudoku-Solver">Smart Sudoku Solver  </a>
-        </div>
-        <h1>Sudoku-Solver </h1>
-        <p><img src="images/link.png" alt="link" width="25" height="25"> <a href="https://github.com/RidhamKumar15/Smart-Sudoku-Solver">Link</a></p>
+  <video id="bg-video" autoplay loop muted playsinline>
+    <source src="galaxy.mp4" type="video/mp4" />
+  </video>
 
-        <p>This Java application solves any NxN Sudoku puzzle using the Recursive Backtracking algorithm. It guarantees a solution for solvable puzzles and displays the time taken to find the solution.</p>
+  <div class="container" role="main" aria-label="Smart Sudoku Solver Project Description">
+    <header class="header" aria-label="Project Title">
+      <a href="https://github.com/RidhamKumar15/Smart-Sudoku-Solver" target="_blank" rel="noopener noreferrer">
+        Smart Sudoku Solver 🚀
+      </a>
+    </header>
 
-        <h2>Features</h2>
-        <ul>
-            <li>Solves NxN Sudoku Puzzles: Works with any size Sudoku grid.</li>
-            <li>Recursive Backtracking Algorithm: Efficiently finds solutions.</li>
-            <li>Timing: Displays how long it took to solve the puzzle.</li>
-        </ul>
+    <h1>Sudoku-Solver</h1>
 
-        <h2>Usage Instructions:</h2>
-        <ol>
-            <li><strong>Download Required Files:</strong></br>
-                Ensure you have the <code>Sudoku.jar</code> file and the <code>puzzle.txt</code> file. Make sure these files are in the same directory.</li>
-            <li><strong>Prepare the Puzzle File:</strong></br>
-                Open <code>puzzle.txt</code> and enter your Sudoku puzzle. Use 0 to represent empty cells. See the File Format section below for details.</li>
-            <li><strong>Run the Solver:</strong></br>
-                Open your terminal or command prompt, navigate to the directory where <code>Sudoku.jar</code> and <code>puzzle.txt</code> are located.</br>
-                <code>cd path/to/your/directory</code></br>
-                <code>java -jar Sudoku.jar</code></li>
-            <li><strong>Enter Puzzle Dimensions:</strong></br>
-                When prompted, specify the number of rows and columns for the inner boxes of the Sudoku grid.</br>
-                <strong>Example for a standard 9x9 Sudoku</strong>:</br>
-                Enter <code>3</code> for the number of rows and <code>3</code> for the number of columns.</br>
-                <strong>Example for a 12x12 Sudoku with 3x4 boxes</strong>:</br>
-                Enter <code>3</code> for rows and <code>4</code> for columns.</li>
-            <li><strong>File Format:</strong></br>
-                The <code>puzzle.txt</code> file should be formatted as follows:
-                <div class="file-format">
-                    3 0 0 4 0 2 0 9 0</br>
-                    0 0 0 0 0 9 0 6 3</br>
-                    0 0 7 0 6 3 1 0 0</br>
-                    0 9 1 7 2 6 0 8 0</br>
-                    0 0 0 9 0 1 0 0 0</br>
-                    0 2 0 3 8 5 9 1 0</br>
-                    0 0 8 1 9 0 2 0 0</br>
-                    6 7 0 2 0 0 0 0 0</br>
-                    0 3 0 6 0 4 0 0 9</br>
-                </div>
-            </li>
-        </ol>
+    <p>
+      <img src="images/link.png" alt="Link icon" width="28" height="28" class="icon-img" />
+      <a class="link-btn" href="https://github.com/RidhamKumar15/Smart-Sudoku-Solver" target="_blank" rel="noopener noreferrer">
+        View on GitHub
+      </a>
+    </p>
 
-        <h2><span style="text-decoration: underline;">Notes</span></h2>
-        <p>The program handles any NxN Sudoku puzzle, but you must specify the dimensions of the inner boxes accurately for correct solving.</br>For non-standard puzzles, adjust the dimensions according to your puzzle layout.</p>
+    <div class="line-container" aria-label="Project summary">
+      <span class="scroll-line">This Java application solves any NxN Sudoku puzzle using the <strong>Recursive Backtracking algorithm</strong>.</span>
+      <span class="scroll-line">It guarantees a solution for solvable puzzles and displays the time taken to find the solution.</span>
     </div>
+
+    <h2>Features</h2>
+    <ul>
+      <li><span class="scroll-line">Solves <strong>NxN Sudoku Puzzles</strong>: Works with any size Sudoku grid.</span></li>
+      <li><span class="scroll-line">Recursive Backtracking Algorithm: Efficiently finds solutions.</span></li>
+      <li><span class="scroll-line">Timing: Displays how long it took to solve the puzzle.</span></li>
+    </ul>
+
+    <h2>Usage Instructions:</h2>
+    <ol>
+      <li>
+        <span class="scroll-line"><strong>Download Required Files:</strong><br />
+          Ensure you have the <code>Sudoku.jar</code> file and the <code>puzzle.txt</code> file. Make sure these files are in the same directory.
+        </span>
+      </li>
+      <li>
+        <span class="scroll-line"><strong>Prepare the Puzzle File:</strong><br />
+          Open <code>puzzle.txt</code> and enter your Sudoku puzzle. Use 0 to represent empty cells. See the File Format section below for details.
+        </span>
+      </li>
+      <li>
+        <span class="scroll-line"><strong>Run the Solver:</strong><br />
+          Open your terminal or command prompt, navigate to the directory where <code>Sudoku.jar</code> and <code>puzzle.txt</code> are located.<br />
+          <code>cd path/to/your/directory</code><br />
+          <code>java -jar Sudoku.jar</code>
+        </span>
+      </li>
+      <li>
+        <span class="scroll-line"><strong>Enter Puzzle Dimensions:</strong><br />
+          When prompted, specify the number of rows and columns for the inner boxes of the Sudoku grid.<br />
+          <strong>Example for a standard 9x9 Sudoku</strong>:<br />
+          Enter <code>3</code> for the number of rows and <code>3</code> for the number of columns.<br />
+          <strong>Example for a 12x12 Sudoku with 3x4 boxes</strong>:<br />
+          Enter <code>3</code> for rows and <code>4</code> for columns.
+        </span>
+      </li>
+      <li>
+        <span class="scroll-line"><strong>File Format:</strong><br />
+          The <code>puzzle.txt</code> file should be formatted as follows:
+        </span>
+        <div class="file-format scroll-line" aria-label="Example puzzle file format">
+3 0 0 4 0 2 0 9 0
+0 0 0 0 0 9 0 6 3
+0 0 7 0 6 3 1 0 0
+0 9 1 7 2 6 0 8 0
+0 0 0 9 0 1 0 0 0
+0 2 0 3 8 5 9 1 0
+0 0 8 1 9 0 2 0 0
+6 7 0 2 0 0 0 0 0
+0 3 0 6 0 4 0 0 9
+        </div>
+      </li>
+    </ol>
+
+    <h2 style="text-decoration: underline;">Notes</h2>
+    <div class="notes" aria-label="Additional notes">
+      <span class="scroll-line">The program handles any NxN Sudoku puzzle, but you must specify the dimensions of the inner boxes accurately for correct solving.</span>
+      <span class="scroll-line">For non-standard puzzles, adjust the dimensions according to your puzzle layout.</span>
+    </div>
+  </div>
+
+  <script>
+    // Animate each .scroll-line individually as it enters/leaves the viewport
+    document.addEventListener("DOMContentLoaded", function () {
+      const lines = document.querySelectorAll(".scroll-line");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            } else {
+              entry.target.classList.remove("visible");
+            }
+          });
+        },
+        { threshold: 0.45 }
+      );
+      lines.forEach((line) => observer.observe(line));
+    });
+  </script>
 </body>
 </html>
